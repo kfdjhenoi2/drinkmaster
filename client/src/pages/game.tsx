@@ -63,27 +63,18 @@ export default function GamePage() {
   const currentPlayer = players[currentPlayerIndex];
 
   return (
-    <div className="min-h-screen text-white relative overflow-hidden">
-      {/* Floating party elements */}
-      <div className="absolute top-0 left-0 w-full h-full pointer-events-none">
-        <div className="floating text-6xl absolute top-10 left-10 opacity-20">🍺</div>
-        <div className="floating text-4xl absolute top-20 right-10 opacity-30" style={{animationDelay: '2s'}}>🎊</div>
-        <div className="floating text-5xl absolute top-40 left-5 opacity-25" style={{animationDelay: '4s'}}>🥂</div>
-        <div className="floating text-3xl absolute bottom-40 right-5 opacity-20" style={{animationDelay: '1s'}}>🎉</div>
-        <div className="floating text-4xl absolute bottom-20 left-8 opacity-30" style={{animationDelay: '3s'}}>🍾</div>
-      </div>
-
-      <div className="container mx-auto px-3 py-4 max-w-lg relative z-10">
+    <div className="min-h-screen text-white">
+      <div className="container mx-auto px-3 py-4 max-w-lg">
         <div className="text-center mb-6">
-          <h1 className="text-4xl font-bold mb-2 text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 via-pink-500 to-purple-500 drop-shadow-lg animate-pulse">
-            🎉 JUOMAPELI 🎉
+          <h1 className="text-4xl font-bold mb-2 text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 via-pink-500 to-purple-500">
+            🍻 JUOMAPELI 🎉
           </h1>
-          <p className="text-xl text-yellow-300 font-semibold">Hauskaa yhdessä! 🥳</p>
+          <p className="text-lg text-yellow-200">Hauskaa yhdessä!</p>
         </div>
 
         <div className="space-y-4">
           {/* Player Setup */}
-          <Card className="bg-gradient-to-br from-purple-600/80 to-pink-600/80 border-2 border-pink-400/50 backdrop-blur-sm shadow-2xl">
+          <Card className="bg-gradient-to-br from-purple-600/70 to-pink-600/70 border border-pink-300/30 shadow-lg">
             <CardHeader className="pb-3">
               <CardTitle className="text-xl text-center text-yellow-300 font-bold">👥 Pelaajat</CardTitle>
             </CardHeader>
@@ -139,7 +130,7 @@ export default function GamePage() {
           </Card>
 
           {/* Category Selection */}
-          <Card className="bg-gradient-to-br from-green-600/80 to-teal-600/80 border-2 border-green-400/50 backdrop-blur-sm shadow-2xl">
+          <Card className="bg-gradient-to-br from-green-600/70 to-teal-600/70 border border-green-300/30 shadow-lg">
             <CardHeader className="pb-3">
               <CardTitle className="text-xl text-center text-yellow-300 font-bold">🎯 Valitse kategoria</CardTitle>
             </CardHeader>
@@ -171,26 +162,25 @@ export default function GamePage() {
           </Card>
 
           {/* Task Display */}
-          <Card className="bg-gradient-to-br from-orange-600/80 to-red-600/80 border-2 border-orange-400/50 backdrop-blur-sm shadow-2xl">
+          <Card className="bg-gradient-to-br from-orange-600/70 to-red-600/70 border border-orange-300/30 shadow-lg">
             <CardContent className="p-6 text-center min-h-48 flex items-center justify-center">
               {currentTask ? (
                 <div 
-                  className={`task-appear ${showTaskAnimation ? 'animate-pulse scale-105' : ''}`}
+                  className="task-appear"
                   data-testid="display-current-task"
-                  onAnimationEnd={() => setShowTaskAnimation(false)}
                 >
-                  <p className="text-4xl font-bold text-yellow-300 mb-4 drop-shadow-lg" data-testid="text-task-player">
-                    🎯 {players[currentPlayerIndex]} 🎯
+                  <p className="text-3xl font-bold text-yellow-300 mb-4" data-testid="text-task-player">
+                    {players[currentPlayerIndex]}
                   </p>
-                  <p className="text-xl text-white leading-relaxed font-semibold drop-shadow-md" data-testid="text-task-content">
+                  <p className="text-lg text-white leading-relaxed" data-testid="text-task-content">
                     {currentTask.text}
                   </p>
                 </div>
               ) : (
                 <div className="text-center">
-                  <div className="text-6xl mb-4 animate-bounce">🎲</div>
-                  <p className="text-xl text-yellow-200 font-semibold" data-testid="text-no-task">
-                    {canGetTask ? "🚀 Paina nappia saadaksesi tehtävän!" : "🎮 Lisää pelaajia ja valitse kategoria"}
+                  <div className="text-5xl mb-4">🎲</div>
+                  <p className="text-lg text-yellow-200" data-testid="text-no-task">
+                    {canGetTask ? "Paina nappia saadaksesi tehtävän!" : "Lisää pelaajia ja valitse kategoria"}
                   </p>
                 </div>
               )}
@@ -206,26 +196,24 @@ export default function GamePage() {
               setCurrentPlayerIndex((prevIndex) => (prevIndex + 1) % players.length);
             }}
             disabled={!canGetTask || isGettingTask}
-            className={`w-full py-8 font-black text-2xl transition-all duration-300 rounded-2xl shadow-2xl ${
+            className={`w-full py-6 font-bold text-xl transition-all duration-200 rounded-xl shadow-lg ${
               canGetTask
-                ? `bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500 hover:from-pink-600 hover:via-red-600 hover:to-yellow-600 text-white cursor-pointer transform ${
-                    isButtonPressed ? 'scale-95' : 'hover:scale-110'
-                  } ${isGettingTask ? 'animate-pulse' : 'hover:shadow-pink-500/50'} border-4 border-yellow-300/50`
-                : "bg-gradient-to-r from-gray-500 to-gray-600 text-gray-300 cursor-not-allowed opacity-60"
+                ? `bg-gradient-to-r from-pink-500 to-red-500 hover:from-pink-600 hover:to-red-600 text-white cursor-pointer transform ${
+                    isButtonPressed ? 'scale-95' : 'hover:scale-105'
+                  } ${isGettingTask ? 'animate-pulse' : ''}`
+                : "bg-gradient-to-r from-gray-500 to-gray-600 text-gray-300 cursor-not-allowed opacity-70"
             }`}
             data-testid="button-get-task"
           >
-            <div className="flex items-center justify-center gap-3">
-              {isGettingTask && <Sparkles className="w-8 h-8 animate-spin text-yellow-300" />}
-              <span className="drop-shadow-lg">
-                {isGettingTask
-                  ? "🎊 Ladataan... 🎊"
-                  : !canGetTask
-                  ? players.length < 2
-                    ? "👥 Lisää pelaajia (min. 2)"
-                    : "🎯 Valitse kategoria"
-                  : "🎉 ANNA TEHTÄVÄ! 🎉"}
-              </span>
+            <div className="flex items-center justify-center gap-2">
+              {isGettingTask && <Sparkles className="w-6 h-6 animate-spin" />}
+              {isGettingTask
+                ? "Ladataan..."
+                : !canGetTask
+                ? players.length < 2
+                  ? "Lisää pelaajia (min. 2)"
+                  : "Valitse kategoria"
+                : "🎲 Anna tehtävä"}
             </div>
           </Button>
         </div>
