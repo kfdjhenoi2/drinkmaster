@@ -12,6 +12,7 @@ interface GameScreenProps {
 
 export function GameScreen({ game, onBackToSetup }: GameScreenProps) {
   const [currentTask, setCurrentTask] = useState<Task | null>(null);
+  const [gameState, setGameState] = useState<'waiting' | 'showing-task'>('waiting');
   const queryClient = useQueryClient();
 
   const { mutate: updateGame } = useMutation({
@@ -32,13 +33,21 @@ export function GameScreen({ game, onBackToSetup }: GameScreenProps) {
     },
     onSuccess: (task: Task) => {
       setCurrentTask(task);
+      setGameState('showing-task');
     },
   });
 
-  const nextPlayer = () => {
-    const nextIndex = (game.currentPlayerIndex + 1) % game.players.length;
-    updateGame({ currentPlayerIndex: nextIndex });
-    setCurrentTask(null);
+  const handleMainButton = () => {
+    if (gameState === 'waiting') {
+      // Get a new task
+      getRandomTask();
+    } else {
+      // Move to next player and reset
+      const nextIndex = (game.currentPlayerIndex + 1) % game.players.length;
+      updateGame({ currentPlayerIndex: nextIndex });
+      setCurrentTask(null);
+      setGameState('waiting');
+    }
   };
 
   const getCategoryConfig = (category: TaskCategory) => {
@@ -97,23 +106,19 @@ export function GameScreen({ game, onBackToSetup }: GameScreenProps) {
       </Card>
 
       {/* Game Controls */}
-      <div className="space-y-4">
+      <div>
         <Button
-          onClick={() => getRandomTask()}
+          onClick={handleMainButton}
           disabled={isGettingTask}
           className="w-full py-4 bg-red-500 hover:bg-red-600 text-white font-bold text-xl"
-          data-testid="button-get-task"
+          data-testid="button-main-action"
         >
-          {isGettingTask ? "Ladataan..." : "Anna tehtävä"}
-        </Button>
-
-        <Button
-          onClick={nextPlayer}
-          variant="outline"
-          className="w-full py-3 bg-gray-600 hover:bg-gray-500 text-white border-gray-500 font-semibold"
-          data-testid="button-next-player"
-        >
-          Seuraava pelaaja
+          {isGettingTask 
+            ? "Ladataan..." 
+            : gameState === 'waiting' 
+              ? "Anna tehtävä" 
+              : "Seuraava pelaaja"
+          }
         </Button>
       </div>
 

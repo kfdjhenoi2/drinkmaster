@@ -1,5 +1,5 @@
-import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { type TaskCategory } from "@shared/schema";
 
 interface CategorySelectionProps {
@@ -14,21 +14,18 @@ export function CategorySelection({ selectedCategory, onCategorySelect }: Catego
       emoji: "🌶️",
       name: "Spicy",
       description: "Rohkeita haasteita",
-      className: "bg-gradient-to-br from-red-500 to-red-600 hover:from-red-400 hover:to-red-500 text-white",
     },
     {
       id: "funny" as TaskCategory,
       emoji: "😂",
       name: "Funny",
       description: "Hauskoja tehtäviä",
-      className: "bg-gradient-to-br from-yellow-400 to-yellow-500 hover:from-yellow-300 hover:to-yellow-400 text-gray-800",
     },
     {
       id: "party" as TaskCategory,
       emoji: "🎊",
       name: "Party",
       description: "Bilemeininki",
-      className: "bg-gradient-to-br from-purple-500 to-purple-600 hover:from-purple-400 hover:to-purple-500 text-white",
     },
   ];
 
@@ -38,26 +35,29 @@ export function CategorySelection({ selectedCategory, onCategorySelect }: Catego
         <CardTitle className="text-2xl text-center text-white">🎯 Valitse kategoria</CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {categories.map((category) => (
-            <Button
-              key={category.id}
-              onClick={() => onCategorySelect(category.id)}
-              className={`p-6 h-auto font-bold text-lg transition-all duration-200 shadow-lg ${
-                category.className
-              } ${
-                selectedCategory === category.id ? "ring-4 ring-white scale-105" : "hover:scale-105"
-              }`}
-              data-testid={`button-category-${category.id}`}
-            >
-              <div className="text-center">
-                <div className="text-2xl mb-2">{category.emoji}</div>
-                <div className="text-lg font-bold">{category.name}</div>
-                <div className="text-sm font-normal opacity-90">{category.description}</div>
-              </div>
-            </Button>
-          ))}
-        </div>
+        <Select value={selectedCategory} onValueChange={onCategorySelect}>
+          <SelectTrigger className="w-full bg-gray-600 border-gray-500 text-white text-lg py-3" data-testid="select-category">
+            <SelectValue placeholder="Valitse kategoria..." />
+          </SelectTrigger>
+          <SelectContent className="bg-gray-600 border-gray-500">
+            {categories.map((category) => (
+              <SelectItem 
+                key={category.id} 
+                value={category.id}
+                className="text-white hover:bg-gray-500 focus:bg-gray-500"
+                data-testid={`option-category-${category.id}`}
+              >
+                <div className="flex items-center gap-2">
+                  <span className="text-lg">{category.emoji}</span>
+                  <div>
+                    <span className="font-semibold">{category.name}</span>
+                    <span className="text-sm text-gray-300 ml-2">- {category.description}</span>
+                  </div>
+                </div>
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </CardContent>
     </Card>
   );
