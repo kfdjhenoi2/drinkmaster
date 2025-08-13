@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -11,7 +11,15 @@ import {
 } from "@/components/ui/select";
 import { X, Sparkles } from "lucide-react";
 import { type Task, type TaskCategory } from "@shared/schema";
-import { useMutation } from "@tanstack/react-query";
+
+function shuffle<T>(arr: T[]): T[] {
+  const a = arr.slice();
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
 
 export default function GamePage() {
   const [players, setPlayers] = useState<string[]>([]);
@@ -21,8 +29,11 @@ export default function GamePage() {
   const [playerInput, setPlayerInput] = useState("");
   const [currentPlayerIndex, setCurrentPlayerIndex] = useState(0);
   const [currentTask, setCurrentTask] = useState<Task | null>(null);
-  const [isButtonPressed, setIsButtonPressed] = useState(false);
-  const [showTaskAnimation, setShowTaskAnimation] = useState(false);
+
+  // UUSI: korttipakka ilman duplikaatteja
+  const [deck, setDeck] = useState<Task[]>([]);
+  const [deckIndex, setDeckIndex] = useState(0);
+  const [deckLoading, setDeckLoading] = useState(false);
 
   const categories = [
     {
@@ -51,20 +62,49 @@ export default function GamePage() {
     },
   ];
 
-  const { mutate: getRandomTask, isPending: isGettingTask } = useMutation({
-    mutationFn: async () => {
-      const response = await fetch(`/api/tasks/${selectedCategory}/random`);
-      if (!response.ok) throw new Error("Failed to get task");
-      return response.json();
-    },
-    onSuccess: (task: Task) => {
-      setShowTaskAnimation(true);
-      setTimeout(() => {
-        setCurrentTask(task);
-        setIsButtonPressed(false);
-      }, 300);
-    },
-  });
+  // Kun kategoria vaihtuu → hae kaikki kysymykset, sekoita pakka
+  useEffect(() => {
+    let cancelled = false;
+
+    async function loadDeck() {
+      if (!selectedCategory) {
+        setDeck([]);
+        setDeckIndex(0);
+        setCurrentTask(null);
+        return;
+      }
+      setDeckLoading(true);
+      try {
+        const r = await fetch(`/api/tasks/${selectedCategory}`);
+        if (!r.ok) throw new Error("Failed to load tasks");
+        const all: Task[] = await r.json();
+
+        // Poista mahdolliset duplikaatit id:n perusteella varmuuden vuoksi
+        const uniq = Array.from(new Map(all.map((t) => [t.id, t])).values());
+        const shuffled = shuffle(uniq);
+
+        if (!cancelled) {
+          setDeck(shuffled);
+          setDeckIndex(0);
+          setCurrentTask(null);
+        }
+      } catch (e) {
+        console.error(e);
+        if (!cancelled) {
+          setDeck([]);
+          setDeckIndex(0);
+          setCurrentTask(null);
+        }
+      } finally {
+        if (!cancelled) setDeckLoading(false);
+      }
+    }
+
+    loadDeck();
+    return () => {
+      cancelled = true;
+    };
+  }, [selectedCategory]);
 
   const addPlayer = () => {
     const name = playerInput.trim();
@@ -83,13 +123,34 @@ export default function GamePage() {
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter") {
-      addPlayer();
-    }
+    if (e.key === "Enter") addPlayer();
   };
 
-  const canGetTask = players.length >= 2 && selectedCategory;
+  const canGetTask =
+    players.length >= 2 && !!selectedCategory && deck.length > 0;
   const currentPlayer = players[currentPlayerIndex];
+
+  // Päänappi: jaa seuraava kortti pakasta (ei toistoa)
+  const handleGiveTask = () => {
+    if (!canGetTask) return;
+
+    // pakka loppu?
+    if (deckIndex >= deck.length) {
+      setCurrentTask({
+        id: "end",
+        text: "Pakka loppui! Vaihda kategoria tai aloita alusta 🎉",
+        category: selectedCategory as TaskCategory,
+      });
+      return;
+    }
+
+    const next = deck[deckIndex];
+    setCurrentTask(next);
+    setDeckIndex((i) => i + 1);
+
+    // Siirrä vuoro seuraavalle (voit korvata omalla satunnaislogiikallasi)
+    setCurrentPlayerIndex((prev) => (prev + 1) % players.length);
+  };
 
   return (
     <div className="min-h-screen text-white relative overflow-hidden">
@@ -261,6 +322,16 @@ export default function GamePage() {
                     {currentTask.text}
                   </p>
                 </div>
+              ) : deckLoading ? (
+                <div className="flex items-center gap-2 text-yellow-200">
+                  <Sparkles className="w-6 h-6 animate-spin" />
+                  <span>Ladataan kategoriaa…</span>
+                </div>
+              ) : deck.length === 0 && selectedCategory ? (
+                <p className="text-xl text-yellow-200 font-semibold">
+                  Tässä kategoriassa ei ole tehtäviä. Lisää Drizzlessä/Neonissa.
+                  🙃
+                </p>
               ) : (
                 <div className="text-center">
                   <div className="text-6xl mb-4 animate-bounce">🎲</div>
@@ -268,8 +339,8 @@ export default function GamePage() {
                     className="text-xl text-yellow-200 font-semibold"
                     data-testid="text-no-task"
                   >
-                    {canGetTask
-                      ? "🚀 Paina nappia saadaksesi tehtävän!"
+                    {players.length >= 2
+                      ? "🎯 Valitse kategoria"
                       : "🎮 Add players & Choose category"}
                   </p>
                 </div>
@@ -279,38 +350,21 @@ export default function GamePage() {
 
           {/* Main Button */}
           <Button
-            onClick={() => {
-              setIsButtonPressed(true);
-              getRandomTask();
-              // Move to next player after getting task
-              setCurrentPlayerIndex(
-                (prevIndex) => (prevIndex + 1) % players.length
-              );
-            }}
-            disabled={!canGetTask || isGettingTask}
+            onClick={handleGiveTask}
+            disabled={!canGetTask || deckLoading}
             className={`w-full py-6 font-bold text-xl transition-all duration-300 rounded-xl shadow-lg ${
               canGetTask
-                ? `bg-gradient-to-r from-pink-500 to-red-500 hover:from-pink-600 hover:to-red-600 text-white cursor-pointer transform ${
-                    isButtonPressed ? "scale-95" : "hover:scale-110"
-                  } ${
-                    isGettingTask ? "animate-pulse" : "hover:shadow-pink-500/50"
-                  } border-2 border-yellow-300/30`
+                ? "bg-gradient-to-r from-pink-500 to-red-500 hover:from-pink-600 hover:to-red-600 text-white cursor-pointer transform hover:scale-110 border-2 border-yellow-300/30"
                 : "bg-gradient-to-r from-gray-500 to-gray-600 text-gray-300 cursor-not-allowed opacity-70"
             }`}
             data-testid="button-get-task"
           >
             <div className="flex items-center justify-center gap-3">
-              {isGettingTask && (
+              {deckLoading && (
                 <Sparkles className="w-7 h-7 animate-spin text-yellow-300" />
               )}
               <span className="drop-shadow-lg">
-                {isGettingTask
-                  ? "🎊 Ladataan... 🎊"
-                  : !canGetTask
-                  ? players.length < 2
-                    ? "👥 Add players (min. 2)"
-                    : "🎯 Valitse kategoria"
-                  : "🎉 ANNA TEHTÄVÄ! 🎉"}
+                {deckLoading ? "🎊 Ladataan..." : "🎉 ANNA TEHTÄVÄ! 🎉"}
               </span>
             </div>
           </Button>
