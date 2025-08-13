@@ -1,6 +1,17 @@
-node_modules
-dist
+# Node/Vite
+node_modules/
+dist/
+build/
+.cache/
+*.log
+
+# Env & local
+.env
+.env.*
+.local/
+.vscode/
 .DS_Store
-server/public
-vite.config.ts.*
-*.tar.gz
+
+# Replit/tilapäiset
+.replit/
+*.sqlite

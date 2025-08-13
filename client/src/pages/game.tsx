@@ -2,14 +2,22 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { X, Sparkles } from "lucide-react";
 import { type Task, type TaskCategory } from "@shared/schema";
 import { useMutation } from "@tanstack/react-query";
 
 export default function GamePage() {
   const [players, setPlayers] = useState<string[]>([]);
-  const [selectedCategory, setSelectedCategory] = useState<TaskCategory | "">("");
+  const [selectedCategory, setSelectedCategory] = useState<TaskCategory | "">(
+    ""
+  );
   const [playerInput, setPlayerInput] = useState("");
   const [currentPlayerIndex, setCurrentPlayerIndex] = useState(0);
   const [currentTask, setCurrentTask] = useState<Task | null>(null);
@@ -17,9 +25,24 @@ export default function GamePage() {
   const [showTaskAnimation, setShowTaskAnimation] = useState(false);
 
   const categories = [
-    { id: "spicy" as TaskCategory, emoji: "🌶️", name: "Spicy", description: "Rohkeita haasteita" },
-    { id: "funny" as TaskCategory, emoji: "😂", name: "Funny", description: "Hauskoja tehtäviä" },
-    { id: "party" as TaskCategory, emoji: "🎊", name: "Party", description: "Bilemeininki" },
+    {
+      id: "spicy" as TaskCategory,
+      emoji: "🌶️",
+      name: "Spicy",
+      description: "Rohkeita haasteita",
+    },
+    {
+      id: "funny" as TaskCategory,
+      emoji: "😂",
+      name: "Funny",
+      description: "Hauskoja tehtäviä",
+    },
+    {
+      id: "party" as TaskCategory,
+      emoji: "🎊",
+      name: "Party",
+      description: "Bilemeininki",
+    },
   ];
 
   const { mutate: getRandomTask, isPending: isGettingTask } = useMutation({
@@ -66,26 +89,52 @@ export default function GamePage() {
     <div className="min-h-screen text-white relative overflow-hidden">
       {/* Floating party elements */}
       <div className="absolute top-0 left-0 w-full h-full pointer-events-none">
-        <div className="floating text-6xl absolute top-10 left-10 opacity-20">🍺</div>
-        <div className="floating text-4xl absolute top-20 right-10 opacity-30" style={{animationDelay: '2s'}}>🎊</div>
-        <div className="floating text-5xl absolute top-40 left-5 opacity-25" style={{animationDelay: '4s'}}>🥂</div>
-        <div className="floating text-3xl absolute bottom-40 right-5 opacity-20" style={{animationDelay: '1s'}}>🎉</div>
-        <div className="floating text-4xl absolute bottom-20 left-8 opacity-30" style={{animationDelay: '3s'}}>🍾</div>
+        <div className="floating text-6xl absolute top-10 left-10 opacity-20">
+          🍺
+        </div>
+        <div
+          className="floating text-4xl absolute top-20 right-10 opacity-30"
+          style={{ animationDelay: "2s" }}
+        >
+          🎊
+        </div>
+        <div
+          className="floating text-5xl absolute top-40 left-5 opacity-25"
+          style={{ animationDelay: "4s" }}
+        >
+          🥂
+        </div>
+        <div
+          className="floating text-3xl absolute bottom-40 right-5 opacity-20"
+          style={{ animationDelay: "1s" }}
+        >
+          🎉
+        </div>
+        <div
+          className="floating text-4xl absolute bottom-20 left-8 opacity-30"
+          style={{ animationDelay: "3s" }}
+        >
+          🍾
+        </div>
       </div>
 
       <div className="container mx-auto px-3 py-4 max-w-lg relative z-10">
         <div className="text-center mb-6">
           <h1 className="text-4xl font-bold mb-2 text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 via-pink-500 to-purple-500 animate-pulse">
-            🍻 JUOMAPELI 🎉
+            🍻 SIPPY 🎉
           </h1>
-          <p className="text-lg text-yellow-200 font-semibold">Hauskaa yhdessä! 🥳</p>
+          <p className="text-lg text-yellow-200 font-semibold">
+            FUN TOGETHER! 🥳
+          </p>
         </div>
 
         <div className="space-y-4">
           {/* Player Setup */}
           <Card className="bg-gradient-to-br from-purple-600/70 to-pink-600/70 border border-pink-300/30 shadow-lg card-hover">
             <CardHeader className="pb-3">
-              <CardTitle className="text-xl text-center text-yellow-300 font-bold">👥 Pelaajat</CardTitle>
+              <CardTitle className="text-xl text-center text-yellow-300 font-bold">
+                👥 Players
+              </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="flex flex-col gap-3 mb-4">
@@ -103,7 +152,7 @@ export default function GamePage() {
                   className="bg-gradient-to-r from-yellow-400 to-orange-500 hover:from-yellow-500 hover:to-orange-600 text-black font-bold py-3 text-lg shadow-lg transform hover:scale-105 transition-all duration-200"
                   data-testid="button-add-player"
                 >
-                  ✨ Lisää pelaaja ✨
+                  ✨ Add player ✨
                 </Button>
               </div>
 
@@ -114,7 +163,10 @@ export default function GamePage() {
                     className="flex justify-between items-center px-4 py-2 rounded-lg bg-gradient-to-r from-blue-500/60 to-purple-500/60 border border-blue-400/50 backdrop-blur-sm"
                     data-testid={`player-item-${index}`}
                   >
-                    <span className="font-semibold" data-testid={`text-player-name-${index}`}>
+                    <span
+                      className="font-semibold"
+                      data-testid={`text-player-name-${index}`}
+                    >
                       {player}
                     </span>
                     <Button
@@ -131,8 +183,11 @@ export default function GamePage() {
               </div>
 
               {players.length < 2 && (
-                <p className="text-sm text-yellow-200 mt-4 text-center font-semibold" data-testid="text-minimum-players">
-                  ⚠️ Vähintään 2 pelaajaa tarvitaan
+                <p
+                  className="text-sm text-yellow-200 mt-4 text-center font-semibold"
+                  data-testid="text-minimum-players"
+                >
+                  ⚠️ Min 2 players
                 </p>
               )}
             </CardContent>
@@ -141,17 +196,27 @@ export default function GamePage() {
           {/* Category Selection */}
           <Card className="bg-gradient-to-br from-green-600/70 to-teal-600/70 border border-green-300/30 shadow-lg card-hover">
             <CardHeader className="pb-3">
-              <CardTitle className="text-xl text-center text-yellow-300 font-bold">🎯 Valitse kategoria</CardTitle>
+              <CardTitle className="text-xl text-center text-yellow-300 font-bold">
+                🎯 Choose Category
+              </CardTitle>
             </CardHeader>
             <CardContent>
-              <Select value={selectedCategory} onValueChange={(value) => setSelectedCategory(value as TaskCategory)}>
-                <SelectTrigger className="w-full bg-white/20 border-2 border-yellow-400/50 text-white text-lg py-3 backdrop-blur-sm" data-testid="select-category">
+              <Select
+                value={selectedCategory}
+                onValueChange={(value) =>
+                  setSelectedCategory(value as TaskCategory)
+                }
+              >
+                <SelectTrigger
+                  className="w-full bg-white/20 border-2 border-yellow-400/50 text-white text-lg py-3 backdrop-blur-sm"
+                  data-testid="select-category"
+                >
                   <SelectValue placeholder="Valitse kategoria..." />
                 </SelectTrigger>
                 <SelectContent className="bg-gradient-to-b from-purple-600 to-blue-600 border-2 border-purple-400/50">
                   {categories.map((category) => (
-                    <SelectItem 
-                      key={category.id} 
+                    <SelectItem
+                      key={category.id}
                       value={category.id}
                       className="text-white hover:bg-white/20 focus:bg-white/20"
                       data-testid={`option-category-${category.id}`}
@@ -160,7 +225,9 @@ export default function GamePage() {
                         <span className="text-lg">{category.emoji}</span>
                         <div>
                           <span className="font-semibold">{category.name}</span>
-                          <span className="text-sm text-yellow-200 ml-2">- {category.description}</span>
+                          <span className="text-sm text-yellow-200 ml-2">
+                            - {category.description}
+                          </span>
                         </div>
                       </div>
                     </SelectItem>
@@ -174,22 +241,30 @@ export default function GamePage() {
           <Card className="bg-gradient-to-br from-orange-600/70 to-red-600/70 border border-orange-300/30 shadow-lg card-hover">
             <CardContent className="p-6 text-center min-h-48 flex items-center justify-center">
               {currentTask ? (
-                <div 
-                  className="task-appear"
-                  data-testid="display-current-task"
-                >
-                  <p className="text-3xl font-bold text-yellow-300 mb-4" data-testid="text-task-player">
+                <div className="task-appear" data-testid="display-current-task">
+                  <p
+                    className="text-3xl font-bold text-yellow-300 mb-4"
+                    data-testid="text-task-player"
+                  >
                     {players[currentPlayerIndex]}
                   </p>
-                  <p className="text-lg text-white leading-relaxed" data-testid="text-task-content">
+                  <p
+                    className="text-lg text-white leading-relaxed"
+                    data-testid="text-task-content"
+                  >
                     {currentTask.text}
                   </p>
                 </div>
               ) : (
                 <div className="text-center">
                   <div className="text-6xl mb-4 animate-bounce">🎲</div>
-                  <p className="text-xl text-yellow-200 font-semibold" data-testid="text-no-task">
-                    {canGetTask ? "🚀 Paina nappia saadaksesi tehtävän!" : "🎮 Lisää pelaajia ja valitse kategoria"}
+                  <p
+                    className="text-xl text-yellow-200 font-semibold"
+                    data-testid="text-no-task"
+                  >
+                    {canGetTask
+                      ? "🚀 Paina nappia saadaksesi tehtävän!"
+                      : "🎮 Add players & Choose category"}
                   </p>
                 </div>
               )}
@@ -202,26 +277,32 @@ export default function GamePage() {
               setIsButtonPressed(true);
               getRandomTask();
               // Move to next player after getting task
-              setCurrentPlayerIndex((prevIndex) => (prevIndex + 1) % players.length);
+              setCurrentPlayerIndex(
+                (prevIndex) => (prevIndex + 1) % players.length
+              );
             }}
             disabled={!canGetTask || isGettingTask}
             className={`w-full py-6 font-bold text-xl transition-all duration-300 rounded-xl shadow-lg ${
               canGetTask
                 ? `bg-gradient-to-r from-pink-500 to-red-500 hover:from-pink-600 hover:to-red-600 text-white cursor-pointer transform ${
-                    isButtonPressed ? 'scale-95' : 'hover:scale-110'
-                  } ${isGettingTask ? 'animate-pulse' : 'hover:shadow-pink-500/50'} border-2 border-yellow-300/30`
+                    isButtonPressed ? "scale-95" : "hover:scale-110"
+                  } ${
+                    isGettingTask ? "animate-pulse" : "hover:shadow-pink-500/50"
+                  } border-2 border-yellow-300/30`
                 : "bg-gradient-to-r from-gray-500 to-gray-600 text-gray-300 cursor-not-allowed opacity-70"
             }`}
             data-testid="button-get-task"
           >
             <div className="flex items-center justify-center gap-3">
-              {isGettingTask && <Sparkles className="w-7 h-7 animate-spin text-yellow-300" />}
+              {isGettingTask && (
+                <Sparkles className="w-7 h-7 animate-spin text-yellow-300" />
+              )}
               <span className="drop-shadow-lg">
                 {isGettingTask
                   ? "🎊 Ladataan... 🎊"
                   : !canGetTask
                   ? players.length < 2
-                    ? "👥 Lisää pelaajia (min. 2)"
+                    ? "👥 Add players (min. 2)"
                     : "🎯 Valitse kategoria"
                   : "🎉 ANNA TEHTÄVÄ! 🎉"}
               </span>

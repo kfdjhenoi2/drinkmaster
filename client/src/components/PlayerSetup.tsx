@@ -34,7 +34,9 @@ export function PlayerSetup({ players, onPlayersChange }: PlayerSetupProps) {
   return (
     <Card className="bg-gray-700 border-gray-600">
       <CardHeader>
-        <CardTitle className="text-2xl text-center text-white">👥 Pelaajat</CardTitle>
+        <CardTitle className="text-2xl text-center text-white">
+          👥 Pelaajat
+        </CardTitle>
       </CardHeader>
       <CardContent>
         <div className="flex flex-col sm:flex-row gap-3 mb-4">
@@ -63,7 +65,10 @@ export function PlayerSetup({ players, onPlayersChange }: PlayerSetupProps) {
               className="flex justify-between items-center bg-gray-600 px-4 py-2 rounded-lg"
               data-testid={`player-item-${index}`}
             >
-              <span className="font-semibold text-white" data-testid={`text-player-name-${index}`}>
+              <span
+                className="font-semibold text-white"
+                data-testid={`text-player-name-${index}`}
+              >
                 {player}
               </span>
               <Button
@@ -79,7 +84,10 @@ export function PlayerSetup({ players, onPlayersChange }: PlayerSetupProps) {
           ))}
         </div>
 
-        <p className="text-sm text-gray-400 mt-4 text-center" data-testid="text-minimum-players">
+        <p
+          className="text-sm text-gray-400 mt-4 text-center"
+          data-testid="text-minimum-players"
+        >
           Vähintään 2 pelaajaa tarvitaan
         </p>
       </CardContent>

@@ -12,12 +12,18 @@ interface GameScreenProps {
 
 export function GameScreen({ game, onBackToSetup }: GameScreenProps) {
   const [currentTask, setCurrentTask] = useState<Task | null>(null);
-  const [gameState, setGameState] = useState<'waiting' | 'showing-task'>('waiting');
+  const [gameState, setGameState] = useState<"waiting" | "showing-task">(
+    "waiting"
+  );
   const queryClient = useQueryClient();
 
   const { mutate: updateGame } = useMutation({
     mutationFn: async (updates: Partial<Game>) => {
-      const response = await apiRequest("PATCH", `/api/games/${game.id}`, updates);
+      const response = await apiRequest(
+        "PATCH",
+        `/api/games/${game.id}`,
+        updates
+      );
       return response.json();
     },
     onSuccess: () => {
@@ -33,12 +39,12 @@ export function GameScreen({ game, onBackToSetup }: GameScreenProps) {
     },
     onSuccess: (task: Task) => {
       setCurrentTask(task);
-      setGameState('showing-task');
+      setGameState("showing-task");
     },
   });
 
   const handleMainButton = () => {
-    if (gameState === 'waiting') {
+    if (gameState === "waiting") {
       // Get a new task
       getRandomTask();
     } else {
@@ -46,15 +52,28 @@ export function GameScreen({ game, onBackToSetup }: GameScreenProps) {
       const nextIndex = (game.currentPlayerIndex + 1) % game.players.length;
       updateGame({ currentPlayerIndex: nextIndex });
       setCurrentTask(null);
-      setGameState('waiting');
+      setGameState("waiting");
     }
   };
 
   const getCategoryConfig = (category: TaskCategory) => {
     const configs = {
-      spicy: { emoji: "🌶️", text: "Spicy", className: "bg-gradient-to-r from-red-500 to-red-600" },
-      funny: { emoji: "😂", text: "Funny", className: "bg-gradient-to-r from-yellow-400 to-yellow-500 text-gray-800" },
-      party: { emoji: "🎊", text: "Party", className: "bg-gradient-to-r from-purple-500 to-purple-600" },
+      spicy: {
+        emoji: "🌶️",
+        text: "Spicy",
+        className: "bg-gradient-to-r from-red-500 to-red-600",
+      },
+      funny: {
+        emoji: "😂",
+        text: "Funny",
+        className:
+          "bg-gradient-to-r from-yellow-400 to-yellow-500 text-gray-800",
+      },
+      party: {
+        emoji: "🎊",
+        text: "Party",
+        className: "bg-gradient-to-r from-purple-500 to-purple-600",
+      },
     };
     return configs[category];
   };
@@ -66,7 +85,9 @@ export function GameScreen({ game, onBackToSetup }: GameScreenProps) {
     <div className="container mx-auto px-4 py-8 max-w-2xl">
       {/* Header */}
       <div className="text-center mb-6">
-        <h1 className="text-3xl md:text-4xl font-bold mb-2 text-white">🎉 Juomapeli 🎉</h1>
+        <h1 className="text-3xl md:text-4xl font-bold mb-2 text-white">
+          🎉 Juomapeli 🎉
+        </h1>
         <div
           className={`inline-block px-4 py-2 rounded-full font-semibold ${categoryConfig.className}`}
           data-testid="display-current-category"
@@ -79,7 +100,10 @@ export function GameScreen({ game, onBackToSetup }: GameScreenProps) {
       <Card className="bg-gray-700 border-gray-600 mb-6">
         <CardContent className="pt-6 text-center">
           <h2 className="text-xl mb-2 text-white">Vuorossa:</h2>
-          <div className="text-3xl font-bold text-yellow-400" data-testid="text-current-player">
+          <div
+            className="text-3xl font-bold text-yellow-400"
+            data-testid="text-current-player"
+          >
             {currentPlayer}
           </div>
         </CardContent>
@@ -90,7 +114,10 @@ export function GameScreen({ game, onBackToSetup }: GameScreenProps) {
         <CardContent className="p-8 text-center min-h-32 flex items-center justify-center">
           {currentTask ? (
             <div data-testid="display-current-task">
-              <p className="text-2xl font-bold text-yellow-400 mb-4" data-testid="text-task-player">
+              <p
+                className="text-2xl font-bold text-yellow-400 mb-4"
+                data-testid="text-task-player"
+              >
                 {currentPlayer}
               </p>
               <p className="text-xl text-white" data-testid="text-task-content">
@@ -113,20 +140,24 @@ export function GameScreen({ game, onBackToSetup }: GameScreenProps) {
           className="w-full py-4 bg-red-500 hover:bg-red-600 text-white font-bold text-xl"
           data-testid="button-main-action"
         >
-          {isGettingTask 
-            ? "Ladataan..." 
-            : gameState === 'waiting' 
-              ? "Anna tehtävä" 
-              : "Seuraava pelaaja"
-          }
+          {isGettingTask
+            ? "Ladataan..."
+            : gameState === "waiting"
+            ? "Anna tehtävä"
+            : "Seuraava pelaaja"}
         </Button>
       </div>
 
       {/* Players List */}
       <Card className="mt-6 bg-gray-700 border-gray-600">
         <CardContent className="p-4">
-          <h3 className="font-semibold mb-3 text-center text-white">Pelaajat:</h3>
-          <div className="flex flex-wrap gap-2 justify-center" data-testid="list-game-players">
+          <h3 className="font-semibold mb-3 text-center text-white">
+            Pelaajat:
+          </h3>
+          <div
+            className="flex flex-wrap gap-2 justify-center"
+            data-testid="list-game-players"
+          >
             {game.players.map((player, index) => (
               <span
                 key={index}

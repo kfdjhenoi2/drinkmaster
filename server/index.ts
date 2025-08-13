@@ -1,3 +1,6 @@
+import "dotenv/config";
+const u = new URL(process.env.DATABASE_URL!);
+console.log("[DB]", `${u.username}@${u.hostname}:${u.port}${u.pathname}`);
 import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";

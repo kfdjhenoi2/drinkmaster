@@ -15,6 +15,13 @@ export const insertGameSchema = createInsertSchema(games).pick({
   category: true,
 });
 
+export const tasks = pgTable("tasks", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  text: text("text").notNull(),
+  category: text("category").notNull(), // sama union kuin TaskCategory
+});
+
+
 export type InsertGame = z.infer<typeof insertGameSchema>;
 export type Game = typeof games.$inferSelect;
 
