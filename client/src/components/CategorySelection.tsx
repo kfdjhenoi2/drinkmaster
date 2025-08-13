@@ -36,6 +36,12 @@ export function CategorySelection({
       name: "Party",
       description: "Bilemeininki",
     },
+    {
+      id: "extreme" as TaskCategory,
+      emoji: "🔥",
+      name: "Extreme",
+      description: "Hardcore haasteet",
+    },
   ];
 
   return (

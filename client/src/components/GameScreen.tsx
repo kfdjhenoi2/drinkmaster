@@ -74,6 +74,11 @@ export function GameScreen({ game, onBackToSetup }: GameScreenProps) {
         text: "Party",
         className: "bg-gradient-to-r from-purple-500 to-purple-600",
       },
+      extreme: {
+        emoji: "🔥",
+        text: "Extreme",
+        className: "bg-gradient-to-r from-orange-600 to-red-700",
+      },
     };
     return configs[category];
   };

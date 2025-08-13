@@ -25,7 +25,7 @@ export const tasks = pgTable("tasks", {
 export type InsertGame = z.infer<typeof insertGameSchema>;
 export type Game = typeof games.$inferSelect;
 
-export type TaskCategory = "spicy" | "funny" | "party";
+export type TaskCategory = "spicy" | "funny" | "party" | "extreme";
 
 export interface Task {
   id: string;

@@ -43,6 +43,12 @@ export default function GamePage() {
       name: "Party",
       description: "Bilemeininki",
     },
+    {
+      id: "extreme" as TaskCategory,
+      emoji: "🔥",
+      name: "Extreme",
+      description: "Hardcore haasteet",
+    },
   ];
 
   const { mutate: getRandomTask, isPending: isGettingTask } = useMutation({

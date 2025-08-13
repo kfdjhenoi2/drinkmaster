@@ -9,6 +9,7 @@ const allowedCategories = new Set<TaskCategory>([
   "spicy",
   "funny",
   "party",
+  "extreme",
 ]);
 
 export async function registerRoutes(app: Express): Promise<Server> {
